@@ -103,7 +103,7 @@ This section will list available skills as they are added.
 | [web-design-teroop](skills/web-design-teroop/SKILL.md) | Comprehensive design guidance for new frontend projects, covering style, logos, icons, and animations. | New Project, Web Design, UI/UX, Branding | Stable |
 | [trae-claw-install](skills/trae-claw-install/SKILL.md) | Repository-driven OpenClaw deployment workflow with platform routing, acceptance checks, and unified troubleshooting steps. | OpenClaw Deployment, DevOps Workflow, Troubleshooting | Stable |
 | [cloudbase](skills/cloudbase/SKILL.md) | Tencent CloudBase development in Trae — MCP-first workflow for Web, WeChat Mini Program, auth, databases, cloud functions, CloudRun, storage, and built-in AI. | CloudBase, 腾讯云开发, Web, Mini Program, Serverless | Stable |
-| [project-governance](skills/project-governance/SKILL.md) | Project governance workspace for AI-assisted development — project protocol (rules, permissions, autonomy levels), directory index, lessons log, session handoff, changelog, version index, and whitelist/blacklist parameter registries, with a scaffold/validate/index CLI. | Project Setup, AI Agent Onboarding, Parameter Versioning, Project Governance | Stable |
+| [project-governance](skills/project-governance/SKILL.md) | Project governance workspace for AI-assisted development — project protocol (rules, permissions, autonomy levels), directory index, lessons log, session handoff, changelog, version index, and whitelist/blacklist parameter registries, with a scaffold/validate/index/check CLI. | Project Setup, AI Agent Onboarding, Parameter Versioning, Project Governance | Stable |
 
 
 > Tip: To add your skill to this catalog, update this table in your PR.

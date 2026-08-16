@@ -1,114 +1,127 @@
 ---
 name: project-governance
-description: Set up and maintain a project governance workspace for AI-assisted development — a project protocol (rules, permissions, autonomy levels), directory index, lessons log, session handoff, changelog, and a whitelist/blacklist decision registry. Use when starting a new AI-assisted project, onboarding an AI agent into an existing project, or when a project lacks structured rules, error archives, or parameter versioning.
+description: Set up and maintain a project governance workspace for AI-assisted long-running projects — project protocol (AGENTS.md), directory index (index.md), error log (LESSONS.md), session handoff, changelog, stable version index (VERSIONS.md), whitelist/blacklist parameter registries. 为 AI 长期项目建立「项目记忆 + 文件索引 + 工作规则 + 版本记录」的治理系统，让 AI 在长期项目里「不忘事、不乱改、不重复犯错」，换会话后仍能接着做。Use when the user complains the project is messy, files are scattered or misplaced, the AI repeats mistakes or uses wrong versions, the user expects the AI to find files itself instead of asking for paths, when starting a new AI-assisted project, onboarding an AI agent into an existing project, or when a project lacks structured rules/versioning. 触发场景：项目太乱、文件乱、找不到文件、乱放文件、又用错版本、项目太多怎么管理、上次做到哪、你不是应该记得吗、哪个才是最终版、建立规则、版本索引、黑白名单。
 ---
 
 # Project Governance
 
-## Description
+> 中文：给 AI 长期项目建立一套「项目记忆 + 文件索引 + 工作规则 + 版本记录」的管理系统，让 AI 换会话、换模型后仍能正确接着项目做，而不是重新猜项目。
 
-A lightweight, agent-readable governance layer for AI-assisted projects. It turns implicit working conventions into explicit, versioned files that both humans and AI agents follow, so long-running agent work stays consistent, auditable, and reproducible across sessions.
+## 30-second overview
 
-The workspace produced by this skill contains:
+这个 Skill 给项目增加 8 个东西：
 
-| File | Purpose |
-|---|---|
-| `AGENTS.md` | Project protocol: goals, index files, directory permission zones, autonomy levels, artifact placement rules, index-first lookup, handoff & lessons discipline |
-| `ARCHITECTURE.md` | System architecture: components, data interfaces, conventions, terminology |
-| `PROJECT.md` | One-page project card: goal, status, deliverables |
-| `index.md` | Authoritative directory map, updated on every file add/remove/move |
-| `LESSONS.md` | AI error & correction log (phenomenon → root cause → correction → lesson) |
-| `session_handoff.md` | End-of-session handoff so the next session resumes cleanly |
-| `CHANGELOG.md` | Version history of decisions and outcomes |
-| `VERSIONS.md` | Stable version index with human judgments and evidence links |
-| `blacklist.json` | Registry of failed parameters/approaches (permanent bans) |
-| `whitelist.json` | Registry of verified-good parameters/approaches (preferred baselines) |
+1. 项目规则 —— AI 应该怎么做
+2. 文件地图 —— 文件在哪里
+3. 项目状态 —— 现在做到哪里
+4. 错误记录 —— 以前踩过什么坑
+5. 版本索引 —— 哪个版本才是真的
+6. 黑白名单 —— 什么能用、什么不能用
+7. 会话交接 —— 上一个 AI 做到哪里
+8. 变更记录 —— 为什么这么改
+
+核心目标：**让 AI 换会话、换模型、甚至换 Agent 后，仍然能正确接着项目做，而不是重新猜项目。**
 
 ## When to Use
 
 Use this skill when:
 
+- The user complains the project is messy, files are scattered, or the AI keeps misplacing files ("你怎么又乱放文件").
+- The user expects the AI to find files itself instead of asking for paths ("你自己找").
+- The AI keeps repeating mistakes or using wrong versions.
+- The user says "你不是应该记得吗？" / "上次不是已经验证过了吗？" / "哪个才是最终版？" / "别重新做，之前已经跑通了" — Memory + Governance boundary scenarios where memory alone is not a reliable authority.
 - Starting a new AI-assisted project and you want the agent to follow a stable protocol from day one.
 - Onboarding an AI agent into an existing project that has no rules, error log, or parameter registry.
 - A project has grown messy: files scattered, parameters changed without record, past mistakes repeated.
-- You want to enforce durable rules such as "index-first file lookup", "plan before execute", or "registry-driven parameter selection".
+- You want to enforce durable rules such as "index-first file lookup", "plan before execute", "file existence ≠ file validity", or "registry-driven parameter selection".
 
 Do NOT use this skill when:
 
 - The task is a one-off question or small edit that does not need project-wide conventions.
 - The project already has a mature governance system and you only need a small rule tweak — edit the existing files directly instead.
 
-## Workflow
+## Memory & Governance Boundary
 
-### Step 1 — Scaffold the governance workspace
+Platform memory (e.g. Trae user profile / project memory) is a **context source,
+not an authoritative fact store**. Governance files are the **project execution
+protocol**. The two complement each other:
 
-Run the scaffold script:
+| Layer | What it answers |
+|---|---|
+| Platform memory | "What happened before / how does this user usually work" |
+| Governance files | "How this project must work now, where files are, which version is authoritative" |
+
+Authority priority when they conflict:
+
+1. Current project files / frozen versions
+2. Project governance files (`AGENTS.md`, `index.md`, `VERSIONS.md`, registries)
+3. Project memory
+4. User long-term memory
+5. AI inference
+
+When memory and governance files disagree, **governance wins**. Durable
+conventions learned from memory must be settled into the governance files after
+human confirmation — memory alone never becomes the project's authority.
+
+## Instructions
+
+### Step 1 — Scaffold
 
 ```bash
 python scripts/governance.py init --project-dir /path/to/project --project-name "My Project"
 ```
 
-This creates `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT.md`, `index.md`, `LESSONS.md`, `session_handoff.md`, `CHANGELOG.md`, `VERSIONS.md`, `blacklist.json`, and `whitelist.json` from `templates/`. It never overwrites existing files unless `--force` is passed.
+Creates 11 governance files from `templates/` (never overwrites existing files unless `--force`).
 
-Alternatively, copy the files from `templates/` manually and fill in the `{{PLACEHOLDER}}` values.
+### Step 2 — Customize
 
-### Step 2 — Customize the protocol
+Edit the generated `AGENTS.md`: directory permission zones, autonomy levels, artifact placement rules, and project-specific rules under "Project Customization". Keep the universal Core Governance Rules as-is.
 
-Edit `AGENTS.md` to reflect the project's real constraints:
+### Step 3 — Maintain (every session)
 
-- Directory permission zones (which areas are read-only / require confirmation / free to edit).
-- Autonomy levels (what the agent may do without asking).
-- Artifact placement rules (where generated files must go).
-- Index files and their reading order.
+1. **Session start**: read `index.md` → `session_handoff.md` → `LESSONS.md`; before generating parameters, read `blacklist.json` / `whitelist.json`.
+2. **During work**: find files via the index (never blind search); inherit whitelist entries with `score > 0.85`; never use `permanent_ban: true`; record new mistakes in `LESSONS.md`.
+3. **Session end**: update `session_handoff.md`, `index.md` (file changes), `CHANGELOG.md` (decisions).
 
-### Step 3 — Maintain the workspace
-
-Every session, follow this loop:
-
-1. **On session start**: read `index.md` → `session_handoff.md` → `LESSONS.md` (and `blacklist.json`/`whitelist.json` before any parameter generation).
-2. **During work**:
-   - Find files via the index, never by blind keyword search.
-   - Before generating parameters, read `blacklist.json` and `whitelist.json`; inherit from `whitelist` entries with `score > 0.85`; never use `permanent_ban: true` entries.
-   - Record any new mistake in `LESSONS.md` (phenomenon → root cause → correction → lesson).
-3. **On session end**: update `session_handoff.md` with progress, open questions, and next steps; update `index.md` for any file changes; append to `CHANGELOG.md`.
-
-### Step 4 — Validate the registries
+### Step 4 — Validate, index, check
 
 ```bash
-python scripts/governance.py validate --project-dir /path/to/project
+python scripts/governance.py validate --project-dir /path/to/project   # registries conform to schema
+python scripts/governance.py index --project-dir /path/to/project      # rebuild index.md map (links + notes)
+python scripts/governance.py check --project-dir /path/to/project      # health gate: files + registries + fresh index
 ```
 
-Checks that `blacklist.json` and `whitelist.json` conform to the schema (required fields, valid `status`/`judge` values, unique `id`s).
+### Input / Output
 
-### Step 5 — Refresh the directory index
+- **Input**: a project directory (with or without existing governance files), a project name, and the user's governance pain points (messy files, wrong versions, repeated mistakes, "你自己找").
+- **Output**: a governance workspace (`AGENTS.md`, `index.md`, `VERSIONS.md`, `LESSONS.md`, `session_handoff.md`, `CHANGELOG.md`, `whitelist.json` / `blacklist.json`) plus a validated, up-to-date index.
 
-```bash
-python scripts/governance.py index --project-dir /path/to/project
-```
+### On Failure
 
-Rebuilds the `Root layout` section of `index.md` from a filesystem scan, so the
-map stays in sync with the actual directory structure.
+- `init` fails (invalid path, permission): report the exact failing command and reason; do not partially scaffold or guess.
+- `validate` reports schema errors: fix the registry entries; never bypass validation.
+- `check` fails (missing files / stale index): run `index`, then re-run `check`; if still failing, report to the human.
+- Never fabricate a "passed" result — report what was verified and what was not.
 
-## File Reference
+## What It Produces
 
-- `templates/AGENTS.md` — protocol template
-- `templates/ARCHITECTURE.md` — architecture template
-- `templates/PROJECT.md` — project card template
-- `templates/index.md` — directory map template
-- `templates/LESSONS.md` — error log template
-- `templates/session_handoff.md` — handoff template
-- `templates/CHANGELOG.md` — changelog template
-- `templates/VERSIONS.md` — stable version index template
-- `templates/blacklist.json` — failed-parameter registry schema
-- `templates/whitelist.json` — verified-parameter registry schema
-- `scripts/governance.py` — scaffold + validate + index CLI
-- `tests/test_governance.py` — 60-case robustness/boundary suite incl. adversarial inputs (stdlib-only)
-- `examples/example-workflow.md` — end-to-end walkthrough
+| File | Purpose |
+|---|---|
+| `AGENTS.md` | Project protocol: core governance rules, authority levels, first-run protocol, permission zones, trust boundary |
+| `index.md` + `index_notes.json` | Authoritative directory map with clickable links and short notes |
+| `VERSIONS.md` | Stable version index with human judgments |
+| `LESSONS.md` | AI error & correction log |
+| `session_handoff.md` | End-of-session handoff |
+| `CHANGELOG.md` | Decision & version history |
+| `whitelist.json` / `blacklist.json` | Verified / failed parameter registries |
+| `ARCHITECTURE.md` / `PROJECT.md` | Architecture & project card |
 
-## Best Practices
+## Details
 
-- Keep `AGENTS.md` concise; put details in referenced files.
-- Distinguish AI review from human review in `CHANGELOG.md` and registry entries (`judge` field). Human review is authoritative.
-- Use `superseded_by` to mark registry entries that have been replaced instead of deleting them.
-- Prefer deterministic outputs: templates, checklists, structured JSON.
-- Keep registry entries small and specific; one failed parameter per entry.
+- `README.md` — full package overview: Core / CLI / Skill-adapter structure, subcommands, limitations, Trae cold-start acceptance test
+- `templates/` — governance file templates
+- `scripts/governance.py` — init / validate / index / check CLI
+
+## Limitations
+
+This package is currently designed and tested primarily for Trae Skills. Other agents may use the generated governance files, but automatic Skill discovery/loading is not guaranteed outside Trae. The governance files and CLI are kept agent-neutral for future adapters.
