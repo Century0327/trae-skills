@@ -21,10 +21,14 @@ Changes: {{CHANGES}}
 └── 🗑️ Archived (read-only)
 ```
 
-> Run `python scripts/governance.py index --project-dir .` to regenerate this
-> section from the filesystem. Short descriptions come from `index_notes.json`.
-
 ## Change log
 | Time | Change | Notes |
 |---|---|---|
 | {{DATE}} | Initial record | ... |
+
+> 目录树区块（`## Root layout` 的代码块）由 `governance.py index` 独占维护：
+> 每次运行会整体重写该区块，并把头部 `Record time` 更新为 UTC 日期。
+> 两个区块标题之间只保留机器生成的代码块——如需人工补充内容，请写在
+> `## Change log` 之后，或放入 `index_notes.json` / 自定义 section。
+> 若检测到两个标题之间存在人工内容，`index` 默认停止并提示，确认覆盖需加 `--force`。
+> 本文件的 Change log 只是 `CHANGELOG.md` 的镜像，决策与状态变化以 `CHANGELOG.md` 为唯一事实源。

@@ -55,6 +55,9 @@
    project files or governance files, the project's current authoritative files
    and frozen versions win. Settle durable conventions from memory into the
    governance files after human confirmation.
+10. **Minimal updates.** Update only the files the task requires and the rules
+    demand. Do not refactor along the way, do not unify for its own sake, and do
+    not expand scope beyond the agreed boundary.
 
 ## Project Customization (edit these for this project)
 
@@ -214,8 +217,12 @@ before execution.
 To find any file / directory / version:
 1. Read `index.md` (the only authoritative map).
 2. Open the target file the index points to.
-3. If the index does not list the target, infer by naming convention but confirm existence with the human.
+3. If the index does not list the target, do not blind-search; report the gap
+   and confirm the intended path with the human.
 4. If the index points to a migrated/archived file, stop and report.
+5. Unmapped directories/files are treated conservatively (read-only by default):
+   do not create, modify, or execute anything inside them until the human maps
+   them into the index.
 
 Never search the filesystem by blind keyword/glob before reading the index.
 
